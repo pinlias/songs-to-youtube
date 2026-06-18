@@ -8,42 +8,55 @@ class Constant:
     YOUTUBE_STUDIO_URL = "https://studio.youtube.com"
     YOUTUBE_UPLOAD_URL = "https://www.youtube.com/upload"
     USER_WAITING_TIME = 1
-    USER_AVATAR_XPATH = "/html/body/ytd-app/div/div/ytd-masthead/div[3]/div[3]/div[2]/ytd-topbar-menu-button-renderer[3]/button/yt-img-shadow/img"
+
+    # Login check: avatar button present on youtube.com when logged in
+    USER_AVATAR_XPATH = "//button[@id='avatar-btn']"
+
     VIDEO_TITLE = "title"
     VIDEO_DESCRIPTION = "description"
     PLAYLIST = "playlist"
     TAGS = "tags"
     NOTIFY_SUBS = "notify_subs"
-    DESCRIPTION_CONTAINER = "/html/body/ytcp-uploads-dialog/tp-yt-paper-dialog/div/ytcp-animatable[1]/ytcp-ve/ytcp-video-metadata-editor/div/ytcp-video-metadata-editor-basics/div[2]/ytcp-social-suggestions-textbox"
-    MORE_OPTIONS_CONTAINER = "/html/body/ytcp-uploads-dialog/tp-yt-paper-dialog/div/ytcp-animatable[1]/ytcp-ve/ytcp-video-metadata-editor/div/div/ytcp-button/div"
-    PLAYLIST_CONTAINER = "/html/body/ytcp-uploads-dialog/tp-yt-paper-dialog/div/ytcp-animatable[1]/ytcp-ve/ytcp-video-metadata-editor/div/ytcp-video-metadata-editor-basics/div[4]/div[3]/div[1]/ytcp-video-metadata-playlists/ytcp-text-dropdown-trigger/ytcp-dropdown-trigger/div/div[2]/span"
-    PLAYLIST_SEARCH = "/html/body/ytcp-playlist-dialog/tp-yt-paper-dialog/div[1]/input"
-    PLAYLIST_SEARCH_CLEAR_BUTTON = "/html/body/ytcp-playlist-dialog/tp-yt-paper-dialog/div[1]/ytcp-icon-button/tp-yt-iron-icon"
-    PLAYLIST_NEW_BUTTON = (
-        "/html/body/ytcp-playlist-dialog/tp-yt-paper-dialog/div[2]/ytcp-button[1]/div"
-    )
-    PLAYLIST_NEW_TITLE = "/html/body/ytcp-playlist-dialog/tp-yt-paper-dialog/div[2]/div[1]/ytcp-form-textarea/div/textarea"
-    PLAYLIST_DONE_BUTTON = '/html/body/ytcp-playlist-dialog/tp-yt-paper-dialog/div[2]/ytcp-button[3]/div'
-    PLAYLIST_CREATE_BUTTON = (
-        "/html/body/ytcp-playlist-dialog/tp-yt-paper-dialog/div[3]/ytcp-button[2]"
-    )
-    PLAYLIST_VISIBILITY_DROPDOWN = (
-        "/html/body/ytcp-playlist-dialog/tp-yt-paper-dialog/div[2]/div[2]"
-    )
+
+    # Upload dialog fields — relative XPaths keyed on stable component names
+    DESCRIPTION_CONTAINER = "//ytcp-social-suggestions-textbox"
+    # "Show more" / "More options" toggle button in the details step
+    MORE_OPTIONS_CONTAINER = "//ytcp-button[@id='toggle-button']"
+
+    # Playlist dropdown trigger inside the upload dialog
+    PLAYLIST_CONTAINER = "//ytcp-video-metadata-playlists//ytcp-text-dropdown-trigger"
+
+    # Elements inside the playlist management dialog
+    PLAYLIST_SEARCH = "//ytcp-playlist-dialog//input"
+    PLAYLIST_SEARCH_CLEAR_BUTTON = "//ytcp-playlist-dialog//ytcp-icon-button"
+    PLAYLIST_NEW_BUTTON = "//ytcp-playlist-dialog//ytcp-button[1]"
+    PLAYLIST_NEW_TITLE = "//ytcp-playlist-dialog//ytcp-form-textarea//textarea"
+    PLAYLIST_DONE_BUTTON = "//ytcp-playlist-dialog//ytcp-button[@id='save-button']"
+    PLAYLIST_CREATE_BUTTON = "//ytcp-playlist-dialog//ytcp-button[@id='create-playlist-button']"
+    PLAYLIST_VISIBILITY_DROPDOWN = "//ytcp-playlist-dialog//ytcp-dropdown"
     PLAYLIST_LABEL = "//label[./span/span[@class='label label-text style-scope ytcp-checkbox-group']]"
+
     TOOLTIP = "//ytcp-paper-tooltip"
-    TAGS_TEXT_INPUT = "/html/body/ytcp-uploads-dialog/tp-yt-paper-dialog/div/ytcp-animatable[1]/ytcp-ve/ytcp-video-metadata-editor/div/ytcp-video-metadata-editor-advanced/div[3]/ytcp-form-input-container/div[1]/div[2]/ytcp-free-text-chip-bar/ytcp-chip-bar/div/input"
-    NOTIFY_SUBSCRIBERS_CHECKBOX = "/html/body/ytcp-uploads-dialog/tp-yt-paper-dialog/div/ytcp-animatable[1]/ytcp-ve/ytcp-video-metadata-editor/div/ytcp-video-metadata-editor-advanced/div[7]/div[4]/ytcp-checkbox-lit/div[1]"
+
+    # Tags chip-bar input
+    TAGS_TEXT_INPUT = "//ytcp-free-text-chip-bar//input"
+
+    # Notify subscribers checkbox
+    NOTIFY_SUBSCRIBERS_CHECKBOX = "//ytcp-checkbox-lit[@id='notify-subscribers']"
+
     TEXTBOX = "textbox"
     TEXT_INPUT = "text-input"
     RADIO_LABEL = "radioLabel"
-    STATUS_CONTAINER = "/html/body/ytcp-uploads-dialog/tp-yt-paper-dialog/div/ytcp-animatable[2]/div/div[1]/ytcp-video-upload-progress/span"
-    NOT_MADE_FOR_KIDS = "/html/body/ytcp-uploads-dialog/tp-yt-paper-dialog/div/ytcp-animatable[1]/ytcp-ve/ytcp-video-metadata-editor/div/ytcp-video-metadata-editor-basics/div[5]/ytkc-made-for-kids-select/div[4]/tp-yt-paper-radio-group/tp-yt-paper-radio-button[2]"
+
+    # Upload progress span inside the upload dialog
+    STATUS_CONTAINER = "//ytcp-video-upload-progress/span"
+
+    # "Not made for kids" radio button — identified by its name attribute (stable)
+    NOT_MADE_FOR_KIDS = "//tp-yt-paper-radio-button[@name='VIDEO_MADE_FOR_KIDS_NOT_MFK']"
+
     NEXT_BUTTON = "next-button"
-    VIDEO_URL_CONTAINER = (
-        "//span[@class='video-url-fadeable style-scope ytcp-video-info']"
-    )
-    VIDEO_URL_ELEMENT = "/html/body/ytcp-uploads-dialog/tp-yt-paper-dialog/div/ytcp-animatable[1]/ytcp-ve/ytcp-uploads-review/div[3]/ytcp-video-info/div/div[2]/div[1]/div[2]/span/a"
+    VIDEO_URL_CONTAINER = "//span[@class='video-url-fadeable style-scope ytcp-video-info']"
+    VIDEO_URL_ELEMENT = "//ytcp-uploads-review//ytcp-video-info//a"
     UPLOADED = "Uploading"
     ERROR_CONTAINER = '//*[@id="error-message"]'
     DONE_BUTTON = "done-button"

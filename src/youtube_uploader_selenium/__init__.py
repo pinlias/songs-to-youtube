@@ -23,6 +23,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.service import Service
 
 from .Constant import *
 
@@ -75,10 +76,10 @@ class YouTubeUploader(QObject):
         self.username = username
         self.jobs = jobs
         options = Options()
-        options.headless = headless
-        self.browser = webdriver.Firefox(
-            firefox_options=options, service_log_path=os.devnull
-        )
+        if headless:
+            options.add_argument("-headless")
+        service = Service(log_output=os.devnull)
+        self.browser = webdriver.Firefox(options=options, service=service)
         atexit.register(self.quit)
         self.browser.implicitly_wait(30)
         self.cancelled = False
@@ -161,13 +162,13 @@ class YouTubeUploader(QObject):
                     continue
                 except Exception:
                     self.log_message.emit(traceback.format_exc(), logging.ERROR)
-                
+
                 # retry
                 self.log_message.emit(f"Retrying upload of {file}", logging.INFO)
                 self.on_progress.emit(file, 0)
                 success = self.upload(file, job)
                 self.upload_finished.emit(file, success)
-                
+
             self.__quit()
         except:
             self.log_message.emit(traceback.format_exc(), logging.ERROR)
@@ -204,7 +205,7 @@ class YouTubeUploader(QObject):
 
         try:
             self.browser.implicitly_wait(5)
-            self.browser.find_element_by_xpath(Constant.USER_AVATAR_XPATH)
+            self.browser.find_element(By.XPATH, Constant.USER_AVATAR_XPATH)
             self.browser.implicitly_wait(30)
             return  # already logged in
         except:
@@ -226,17 +227,18 @@ class YouTubeUploader(QObject):
         self.browser.get(Constant.YOUTUBE_URL)
 
     def __find_playlist_checkbox_no_search(self, name):
-        labels = self.browser.find_elements_by_xpath(Constant.PLAYLIST_LABEL)
+        labels = self.browser.find_elements(By.XPATH, Constant.PLAYLIST_LABEL)
         if not labels:
             return None
         for element in labels:
-            name_element = element.find_element_by_xpath(
-                ".//span/span[@class='label label-text style-scope ytcp-checkbox-group']"
+            name_element = element.find_element(
+                By.XPATH,
+                ".//span/span[@class='label label-text style-scope ytcp-checkbox-group']",
             )
             # if playlist has zero width space, this will not find the checkbox
             # might also need to replace u200c
-            if name_element.text == name.replace("\u200b", ""):
-                return element.find_element_by_xpath(".//ytcp-checkbox-lit")
+            if name_element.text == name.replace("​", ""):
+                return element.find_element(By.XPATH, ".//ytcp-checkbox-lit")
         return None
 
     def __find_playlist_checkbox(self, name):
@@ -374,8 +376,9 @@ class YouTubeUploader(QObject):
                     # Set playlist visibility
                     self.__find(By.XPATH, Constant.PLAYLIST_VISIBILITY_DROPDOWN).click()
                     self.__wait()
-                    playlist_visibility = self.browser.find_element_by_xpath(
-                        '//*[@test-id="{}"]'.format(metadata_dict["visibility"])
+                    playlist_visibility = self.browser.find_element(
+                        By.XPATH,
+                        '//*[@test-id="{}"]'.format(metadata_dict["visibility"]),
                     )
                     if playlist_visibility is None:
                         raise Exception(
@@ -412,7 +415,7 @@ class YouTubeUploader(QObject):
                     self.__wait()
 
         # hide tooltips which can obscure buttons
-        tooltips = self.browser.find_elements_by_xpath(Constant.TOOLTIP)
+        tooltips = self.browser.find_elements(By.XPATH, Constant.TOOLTIP)
         if tooltips is not None:
             for element in tooltips:
                 try:
@@ -491,8 +494,8 @@ class YouTubeUploader(QObject):
         self.__wait()
 
         while True:
-            status_container = self.browser.find_element_by_xpath(
-                Constant.STATUS_CONTAINER
+            status_container = self.browser.find_element(
+                By.XPATH, Constant.STATUS_CONTAINER
             )
             self.log_message.emit(
                 f"Upload status: {status_container.text}", logging.INFO
@@ -525,7 +528,7 @@ class YouTubeUploader(QObject):
         # "File is a duplicate of a video you have already uploaded"
         if done_button.get_attribute("aria-disabled") == "true":
             error_message = self.__find(By.XPATH, Constant.ERROR_CONTAINER).text
-            self.log_message(error_message, logging.ERROR)
+            self.log_message.emit(error_message, logging.ERROR)
             return False
 
         done_button.click()
