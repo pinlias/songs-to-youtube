@@ -222,9 +222,33 @@ class YouTubeUploader(QObject):
                 else:
                     raise TypeError(f"File {cookie_path} is not a json or pkl file")
             for cookie in cookies:
-                self.browser.add_cookie(cookie)
+                cookie = self.__normalize_cookie(cookie)
+                try:
+                    self.browser.add_cookie(cookie)
+                except Exception as e:
+                    self.log_message.emit(
+                        f"Skipping cookie {cookie.get('name')}: {e}", logging.DEBUG
+                    )
 
         self.browser.get(Constant.YOUTUBE_URL)
+
+    @staticmethod
+    def __normalize_cookie(cookie: dict) -> dict:
+        normalized = {}
+        # Fields Selenium accepts
+        for field in ("name", "value", "path", "domain", "secure", "httpOnly"):
+            if field in cookie:
+                normalized[field] = cookie[field]
+        # expirationDate (browser export) → expiry (Selenium), must be int
+        if "expiry" in cookie:
+            normalized["expiry"] = int(cookie["expiry"])
+        elif "expirationDate" in cookie:
+            normalized["expiry"] = int(cookie["expirationDate"])
+        # sameSite must be Strict/Lax/None — "unspecified" is invalid
+        same_site = cookie.get("sameSite", "")
+        if same_site in ("Strict", "Lax", "None"):
+            normalized["sameSite"] = same_site
+        return normalized
 
     def __find_playlist_checkbox_no_search(self, name):
         labels = self.browser.find_elements(By.XPATH, Constant.PLAYLIST_LABEL)
