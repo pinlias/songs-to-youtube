@@ -77,8 +77,16 @@ class YouTubeUploader(QObject):
             self.cookies_paths.append(cookies_path)
         self.username = username
         self.jobs = jobs
-        if browser == "Chrome":
+        if browser in ("Chrome", "Brave"):
             chrome_options = ChromeOptions()
+            if browser == "Brave":
+                brave_path = self.__find_brave()
+                if brave_path:
+                    chrome_options.binary_location = brave_path
+                else:
+                    raise FileNotFoundError(
+                        "Brave not found. Install it or choose a different browser in Settings."
+                    )
             if headless:
                 chrome_options.add_argument("--headless=new")
             chrome_options.add_argument("--no-sandbox")
@@ -98,6 +106,19 @@ class YouTubeUploader(QObject):
         atexit.register(self.quit)
         self.browser.implicitly_wait(30)
         self.cancelled = False
+
+    @staticmethod
+    def __find_brave():
+        candidates = [
+            r"C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe",
+            os.path.expandvars(
+                r"%LOCALAPPDATA%\BraveSoftware\Brave-Browser\Application\brave.exe"
+            ),
+            "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser",
+            "/usr/bin/brave-browser",
+            "/usr/bin/brave",
+        ]
+        return next((p for p in candidates if os.path.exists(p)), None)
 
     def __validate_inputs(self, video_path, metadata_dict):
         if Constant.NOTIFY_SUBS not in metadata_dict:

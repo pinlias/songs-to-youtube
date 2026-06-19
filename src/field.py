@@ -45,6 +45,7 @@ class SETTINGS_VALUES:
     class Browser(str, Enum):
         FIREFOX = "Firefox"
         CHROME = "Chrome"
+        BRAVE = "Brave"
 
     COMBO_BOX_VALUES = {
         "dragAndDropBehavior": [item.value for item in DragAndDrop],
