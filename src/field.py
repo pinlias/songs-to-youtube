@@ -42,12 +42,17 @@ class SETTINGS_VALUES:
         PUBLIC = "PUBLIC"
         UNLISTED = "UNLISTED"
 
+    class Browser(str, Enum):
+        FIREFOX = "Firefox"
+        CHROME = "Chrome"
+
     COMBO_BOX_VALUES = {
         "dragAndDropBehavior": [item.value for item in DragAndDrop],
         "logLevel": [item.value for item in LogLevel],
         "albumPlaylist": [item.value for item in AlbumPlaylist],
         "videoVisibility": [item.value for item in VideoVisibility],
         "videoVisibilityAlbum": [item.value for item in VideoVisibility],
+        "browserType": [item.value for item in Browser],
     }
 
     class CheckBox(str, Enum):

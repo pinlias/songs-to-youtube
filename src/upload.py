@@ -30,6 +30,7 @@ class UploadWorker(QObject):
                 self.username,
                 self.jobs,
                 get_setting("headlessBrowser") == SETTINGS_VALUES.CheckBox.CHECKED,
+                get_setting("browserType"),
             )
             self.uploader.upload_finished.connect(
                 lambda file_path, success: self.upload_finished.emit(file_path, success)

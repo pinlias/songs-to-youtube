@@ -22,8 +22,10 @@ from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.firefox.service import Service
+from selenium.webdriver.chrome.options import Options as ChromeOptions
+from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
+from selenium.webdriver.firefox.service import Service as FirefoxService
 
 from .Constant import *
 
@@ -55,7 +57,7 @@ class YouTubeUploader(QObject):
     log_message = Signal(str, int)  # message, loglevel
     on_progress = Signal(str, int)  # job filename, percent done
 
-    def __init__(self, username, jobs, headless, cookies_path="") -> None:
+    def __init__(self, username, jobs, headless, browser="Firefox", cookies_path="") -> None:
         super().__init__()
         self.headless = headless
         self.cookies_paths = []
@@ -75,11 +77,24 @@ class YouTubeUploader(QObject):
             self.cookies_paths.append(cookies_path)
         self.username = username
         self.jobs = jobs
-        options = Options()
-        if headless:
-            options.add_argument("-headless")
-        service = Service(log_output=os.devnull)
-        self.browser = webdriver.Firefox(options=options, service=service)
+        if browser == "Chrome":
+            chrome_options = ChromeOptions()
+            if headless:
+                chrome_options.add_argument("--headless=new")
+            chrome_options.add_argument("--no-sandbox")
+            chrome_options.add_argument("--disable-dev-shm-usage")
+            self.browser = webdriver.Chrome(
+                options=chrome_options,
+                service=ChromeService(log_output=os.devnull),
+            )
+        else:
+            firefox_options = FirefoxOptions()
+            if headless:
+                firefox_options.add_argument("-headless")
+            self.browser = webdriver.Firefox(
+                options=firefox_options,
+                service=FirefoxService(log_output=os.devnull),
+            )
         atexit.register(self.quit)
         self.browser.implicitly_wait(30)
         self.cancelled = False

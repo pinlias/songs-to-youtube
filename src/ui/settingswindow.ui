@@ -162,6 +162,16 @@
            </widget>
           </item>
           <item>
+           <widget class="QLabel" name="label_browser">
+            <property name="text">
+             <string>Browser:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="browserType"/>
+          </item>
+          <item>
            <widget class="QLabel" name="label_11">
             <property name="text">
              <string>Upload videos as:</string>
